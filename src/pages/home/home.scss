@@ -1,3 +1,10 @@
 page-home {
+  ion-row, ion-grid {
+    height: 100%;
+  }
 
+  .label-selected-colour {
+    font-weight: bold;
+    background-color: rgb(223, 219, 219);
+  }
 }

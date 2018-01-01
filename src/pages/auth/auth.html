@@ -1,0 +1,33 @@
+
+<ion-content padding>
+
+    <div style="margin-top: 5%; margin-left: 20%; margin-right: 20%;">
+      <div style="padding-left: 16px;">
+        <h3>Sign in</h3>
+        <p>to continue to Azia</p>
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="onVerifyCredentials(f)">
+
+        <ion-item>
+          <ion-label floating>Email</ion-label>
+          <ion-input ngModel name="email" type="email" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label floating>Password</ion-label>
+          <ion-input ngModel name="password" type="password" required></ion-input>
+        </ion-item>
+
+        <br><br>
+        <button [disabled]="f.invalid" ion-button round full type="submit">Login</button>
+
+      </form>
+
+      <br><br><br>
+      <p text-center ion-text color="primary" style="cursor: pointer">Created with love by Kossy</p>
+    </div>
+
+  </ion-content>
+
+

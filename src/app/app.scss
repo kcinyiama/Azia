@@ -14,3 +14,16 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+
+.scroll-content {
+  /**
+   * Hides the scroll bar. Shows the scroll bar if there's content to be
+   * scrolled. Used hidden to remove it
+   */
+  overflow-y: auto;
+}
+
+.app-background-colour {
+  background-color: rgb(235, 235, 240);
+}

@@ -1,0 +1,38 @@
+<ion-content>
+
+  <div style="background-color: #333; height: 40px;">
+    <button ion-button icon-only clear (click)="onBackPressed()">
+      <ion-icon name="close" color="light"></ion-icon>
+    </button>
+
+    <button ion-button icon-only clear style="float: right;">
+      <ion-icon name="more" color="light"></ion-icon>
+    </button>
+  </div>
+
+  <div padding>
+    <b>
+      <ion-input placeholder="Title" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-input>
+    </b>
+
+    <hr>
+
+    <div class="spinner">
+      <div class="bounce1" [ngClass]="{hide: !isSaving}"></div>
+      <div class="bounce2" [ngClass]="{hide: !isSaving}"></div>
+      <div class="bounce3" [ngClass]="{hide: !isSaving}"></div>
+
+      <span [ngClass]="{hide: isSaving}">{{ saveStatus }}</span>
+    </div>
+
+    <b>
+      <ion-input placeholder="Preamble" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-input>
+    </b>
+
+    <ion-textarea placeholder="Write to me" rows="12" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-textarea>
+
+  </div>
+
+</ion-content>
+
+
