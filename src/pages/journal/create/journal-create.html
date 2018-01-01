@@ -5,7 +5,7 @@
       <ion-icon name="close" color="light"></ion-icon>
     </button>
 
-    <button ion-button icon-only clear style="float: right;">
+    <button ion-button icon-only clear style="float: right;" (click)="onOptionsMenuPressed($event)">
       <ion-icon name="more" color="light"></ion-icon>
     </button>
   </div>
@@ -29,10 +29,21 @@
       <ion-input placeholder="Preamble" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-input>
     </b>
 
-    <ion-textarea placeholder="Write to me" rows="12" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-textarea>
-
+    <ion-textarea placeholder="Write to me" rows="10" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-textarea>
   </div>
 
 </ion-content>
 
+<ion-footer padding>
+  <ion-chip style="margin: 2px;" *ngFor="let tag of journalTagList">
+    <ion-icon name="bookmark"></ion-icon>
+    <ion-label>{{ tag }}</ion-label>
+    <button ion-button clear color="primary" (click)="onRemoveJournalTag(tag)">
+      <ion-icon name="close-circle"></ion-icon>
+    </button>
+  </ion-chip>
+
+  <br/>
+  <ion-input #tagInput placeholder="Add tags" autocorrect="on" (keypress)="onAddJournalTag(tagInput, $event)"></ion-input>
+</ion-footer>
 

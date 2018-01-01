@@ -1,4 +1,3 @@
-import { LabelModel } from './label';
 
 export class JournalModel {
 
@@ -18,7 +17,7 @@ export class JournalModel {
 
     public tags: string[],
 
-    public label: LabelModel
+    public labelId: number
   )
   {}
 

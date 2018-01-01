@@ -4,7 +4,7 @@
     <p style="margin-left: 50px;">{{ item.title }}</p>
 
     <div style="box-shadow: 0px 3px 3px #ccd;">
-      <button ion-item no-lines *ngFor="let journal of item.journalList">
+      <button ion-item no-lines *ngFor="let journal of item.journalList" (click)="onViewJournal(journal.id)">
 
         <div class="journal-img-body" item-start>
           <p class="journal-img-content">{{ extractFirstLetter(journal.title) }}</p>
@@ -15,9 +15,6 @@
           <p style="display: inline-block;">{{ journal.preamble }}</p>
         </div>
 
-        <button ion-button clear icon-only item-end>
-          <ion-icon name="more" ios="md-more"></ion-icon>
-        </button>
       </button>
     </div>
     <br/>

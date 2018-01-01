@@ -1,5 +1,6 @@
+
 import { Component, OnInit } from '@angular/core';
-import { ViewController } from 'ionic-angular';
+import { ViewController, PopoverController } from 'ionic-angular';
 
 import { Subject } from 'rxjs/Subject';
 import { of }         from 'rxjs/observable/of';
@@ -10,6 +11,7 @@ import {
 
 import { Observable } from 'rxjs/Observable';
 
+import { LabelPopoverPage } from './label/label';
 import { LabelModel } from './../../../models/label';
 import { JournalModel } from './../../../models/journal';
 
@@ -25,13 +27,17 @@ export class JournalCreatePage implements OnInit {
   /** If the journal was successfully saved or not */
   saveStatus: string = 'Saved';
 
+  journalTagList: string[] = ['Love', 'Happy', 'Joy'];
+
   journal$: Observable<string[]>;
 
   private saveJournal = new Subject<JournalModel>();
 
-  constructor(private viewCtrl: ViewController) {
-
-  }
+  constructor
+  (
+    private viewCtrl: ViewController,
+    private popoverCtrl: PopoverController
+  ) {}
 
   ngOnInit(): void {
     this.saveJournal.pipe(
@@ -44,6 +50,45 @@ export class JournalCreatePage implements OnInit {
 
     ).subscribe((res) => {
       console.log(res);
+    });
+  }
+
+  onAddJournalTag(tagInput: any, event: KeyboardEvent): void {
+    if (this.journalTagList.length == 10) {
+      alert('Max tag added');
+      return;
+    }
+
+    if (event.keyCode == 13 && tagInput.value != '') {
+      // Tag mush not exist already
+      const index = this.journalTagList.findIndex((journalTag: string) => {
+        return journalTag.toLowerCase() == tagInput.value.toLowerCase()
+      });
+
+      if (index != -1) {
+        alert('Tag already exists');
+        return;
+      }
+
+      // enter pressed
+      this.journalTagList.push(tagInput.value);
+      tagInput.value = '';
+
+      // Trigger the event here for newly added tags
+      this.onJournalContentChange();
+    }
+  }
+
+  onRemoveJournalTag(tag: string): void {
+    this.journalTagList = this.journalTagList.filter((journalTag: string) => {
+      return journalTag.toLocaleLowerCase() != tag.toLocaleLowerCase();
+    });
+  }
+
+  onOptionsMenuPressed(event: any): void {
+    let popover = this.popoverCtrl.create(LabelPopoverPage);
+    popover.present({
+      ev: event
     });
   }
 

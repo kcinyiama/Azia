@@ -1,0 +1,33 @@
+<ion-content>
+
+  <div style="height: 40px;">
+    <button ion-button clear icon-only>
+      <ion-icon name="pricetag" color="primary"></ion-icon>
+      <p>My thoughts</p>
+    </button>
+    <button ion-button icon-only clear style="float: right;" (click)="onDeleteJournal()">
+      <ion-icon name="trash" style="color: rgb(162, 162, 172);"></ion-icon>
+    </button>
+    <button ion-button icon-only clear style="float: right;" (click)="onUpdateJournal()">
+      <ion-icon name="create" style="color: rgb(162, 162, 172);"></ion-icon>
+    </button>
+  </div>
+
+  <div padding>
+    <h3 text-center>{{ journal.title }}</h3>
+    <p text-center style="color: rgb(47, 47, 49); font-weight: 500; font-size: 16px;">{{ journal.preamble }}</p>
+    <p text-center style="color: rgb(162, 162, 172);" [innerHTML]="getLastUpdateText()"></p>
+
+    <div style="overflow-y: scroll; height: 250px;">
+      <p style="font-size: 17px; padding: 10px;">{{ journal.content }}</p>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer padding>
+  <ion-chip style="margin: 2px;" *ngFor="let tag of journal.tags">
+    <ion-icon name="bookmark"></ion-icon>
+    <ion-label>{{ tag }}</ion-label>
+  </ion-chip>
+</ion-footer>

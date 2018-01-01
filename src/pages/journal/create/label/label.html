@@ -1,0 +1,13 @@
+
+<button ion-item no-lines *ngFor="let item of labelList; let i = index" (click)="onSelectLabel(i)">
+  <ion-icon color="secondary" item-left [name]=getSelectedLabelIcon(item.id)></ion-icon>
+  {{ item.name }}
+</button>
+
+<hr style="background-color: #ccd;">
+
+<button ion-item no-lines (click)="onCreateNewLabel()">
+  <ion-icon item-left name="add"></ion-icon>
+  Create Label
+</button>
+

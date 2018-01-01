@@ -9,6 +9,8 @@ import { HomePage } from '../pages/home/home';
 import { AuthPage } from './../pages/auth/auth';
 import { JournalPage } from './../pages/journal/journal';
 import { JournalCreatePage } from './../pages/journal/create/journal-create';
+import { LabelPopoverPage } from './../pages/journal/create/label/label';
+import { JournalViewPage } from './../pages/journal/view/journal-view';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { JournalCreatePage } from './../pages/journal/create/journal-create';
     AuthPage,
     JournalPage,
     JournalCreatePage,
+    LabelPopoverPage,
+    JournalViewPage,
   ],
   imports: [
     BrowserModule,
@@ -29,6 +33,8 @@ import { JournalCreatePage } from './../pages/journal/create/journal-create';
     AuthPage,
     JournalPage,
     JournalCreatePage,
+    LabelPopoverPage,
+    JournalViewPage
   ],
   providers: [
     StatusBar,
