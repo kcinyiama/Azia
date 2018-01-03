@@ -1,7 +1,9 @@
+
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ViewController } from 'ionic-angular';
+import { NavParams, AlertController, ViewController } from 'ionic-angular';
 
 import { LabelModel } from './../../../../models/label';
+import { LabelProvider } from './../../../../providers/label/label';
 
 @Component({
   templateUrl: './label.html'
@@ -10,22 +12,37 @@ export class LabelPopoverPage implements OnInit {
 
   selectedLabel: LabelModel;
 
-  labelList: LabelModel[] = [
-    new LabelModel(1, 'My thoughts'),
-    new LabelModel(2, 'Workplace'),
-    new LabelModel(3, 'Future plans'),
-    new LabelModel(4, 'No label')
-  ];
+  labelList: LabelModel[] = [];
 
   constructor
   (
+    private navParams: NavParams,
     private viewCtrl: ViewController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private labelProvider: LabelProvider
   )
   {}
 
   ngOnInit(): void {
-    this.selectedLabel = this.labelList[0];
+    this.labelProvider.labelsOnChangeEvent.subscribe(() => {
+      this.labelList = this.labelProvider.getLabels();
+
+      if (this.labelList.length > 0 && this.selectedLabel == null) {
+        this.selectedLabel = this.labelList[0];
+      }
+    });
+
+    const labelId: number = this.navParams.data.labelId;
+
+    this.labelList = this.labelProvider.getLabels();
+
+    this.selectedLabel = this.labelList.find((local: LabelModel) => {
+      return local.id == labelId;
+    });
+
+    if (!this.selectedLabel) {
+      this.selectedLabel = this.labelList[0];
+    }
   }
 
   onCreateNewLabel(): void {
@@ -47,7 +64,7 @@ export class LabelPopoverPage implements OnInit {
           text: 'Save',
           handler: (data: any) => {
             if (data.label_name != '') {
-
+              this.labelProvider.saveLabel(new LabelModel(-1, data.label_name), null);
             }
           }
         }
@@ -58,6 +75,8 @@ export class LabelPopoverPage implements OnInit {
 
   onSelectLabel(index: number): void {
     this.selectedLabel = this.labelList[index];
+
+    this.viewCtrl.dismiss(this.selectedLabel.id);
   }
 
   getSelectedLabelIcon(id: number): string {

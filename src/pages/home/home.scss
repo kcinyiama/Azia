@@ -7,4 +7,14 @@ page-home {
     font-weight: bold;
     background-color: rgb(223, 219, 219);
   }
+
+  button.item.item-block.item-md:hover {
+    .label-settings-icon {
+      display: block;
+    }
+  }
+
+  .label-settings-icon {
+    display: none;
+  }
 }

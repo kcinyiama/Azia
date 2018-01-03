@@ -1,8 +1,14 @@
+
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { IonicStorageModule } from '@ionic/storage';
+
+import { AppStorage } from './../providers/storage/app';
+import { LabelProvider } from './../providers/label/label';
+import { JournalProvider } from './../providers/journal/journal';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -11,6 +17,7 @@ import { JournalPage } from './../pages/journal/journal';
 import { JournalCreatePage } from './../pages/journal/create/journal-create';
 import { LabelPopoverPage } from './../pages/journal/create/label/label';
 import { JournalViewPage } from './../pages/journal/view/journal-view';
+import { OptionPopoverPage } from './../pages/home/option/option';
 
 @NgModule({
   declarations: [
@@ -21,10 +28,12 @@ import { JournalViewPage } from './../pages/journal/view/journal-view';
     JournalCreatePage,
     LabelPopoverPage,
     JournalViewPage,
+    OptionPopoverPage
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -34,11 +43,15 @@ import { JournalViewPage } from './../pages/journal/view/journal-view';
     JournalPage,
     JournalCreatePage,
     LabelPopoverPage,
-    JournalViewPage
+    JournalViewPage,
+    OptionPopoverPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    AppStorage,
+    JournalProvider,
+    LabelProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

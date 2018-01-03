@@ -25,8 +25,16 @@
           <button [ngClass]="getSelectionColour(label.id)" ion-item no-lines *ngFor="let label of labelList; let i = index" (click)="onLabelSelected(i)">
             <ion-icon color="primary" name="apps" item-left></ion-icon>
             <p>{{ label.name }}</p>
+            <ion-icon class="label-settings-icon" color="dark" small name="settings" item-right (click)="onLabelSettings(i)"></ion-icon>
           </button>
         </ion-list>
+
+        <hr style="background-color: #ccd;">
+
+        <button class="app-background-colour" ion-item no-lines (click)="onCreateNewLabel()">
+          <ion-icon item-left name="add"></ion-icon>
+          <p>Create Label</p>
+        </button>
 
       </ion-col>
       <ion-col col-10>

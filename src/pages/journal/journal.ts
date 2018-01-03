@@ -5,6 +5,7 @@ import { LabelModel } from './../../models/label';
 import { JournalModel } from './../../models/journal';
 import { JournalCreatePage } from './create/journal-create';
 import { JournalViewPage } from './view/journal-view';
+import { JournalProvider } from './../../providers/journal/journal';
 
 import { default as prettyDate } from 'pretty-date';
 
@@ -14,41 +15,41 @@ import { default as prettyDate } from 'pretty-date';
 })
 export class JournalPage implements OnInit {
 
+  labelModel: LabelModel;
+
   journalGroup: {title: string, journalList: JournalModel[]}[] = [];
 
   constructor(
     private events: Events,
     private navCtrl: NavController,
-    private modalCtrl: ModalController
-  ) {
-
-  }
+    private modalCtrl: ModalController,
+    private journalProvider: JournalProvider
+  )
+  {}
 
   ngOnInit(): void {
     this.events.subscribe('label:selected', (labelModel: LabelModel) => {
-      // TODO Fetch the journals based on the label from the storage
+      this.labelModel = labelModel;
 
-      const journalList: JournalModel[] = [
-        new JournalModel(1, 'A Week Like No Other', 'A very long content', 'I thought it was all over but then I was wrong', new Date('April 17, 2017 03:24:00'), new Date(), [], 1),
-        new JournalModel(2, 'How I Met A Diva', 'A very long content', "If you think you've seen them all, look again", new Date('April 16, 2017 03:24:00'), new Date(), [], 1),
-        new JournalModel(3, 'A Journey To Akitikpa', 'A very long content', "A very wonderful place to be", new Date('June 17, 2017 03:24:00'), new Date(), [], 1),
-        new JournalModel(4, 'Challenge', 'A very long content', "This is the toughest battle yet", new Date('June 17, 2017 03:24:00'), new Date(), [], 1),
-        new JournalModel(5, 'Crush', 'A very long content', "I don't have a preamble for this one", new Date('June 17, 2017 03:24:00'), new Date(), [], 1),
-      ];
+      const journalList: JournalModel[] = this.journalProvider.getJournals(labelModel.id);
+      this.prepareJournal(journalList);
+    });
 
+    this.journalProvider.journalsOnChangeEvent.subscribe(() => {
+      const journalList: JournalModel[] = this.journalProvider.getJournals(this.labelModel.id);
       this.prepareJournal(journalList);
     });
   }
 
   onCreateJournal(): void {
-    const createJournalModal = this.modalCtrl.create(JournalCreatePage, {}, {
+    const createJournalModal = this.modalCtrl.create(JournalCreatePage, {labelId: this.labelModel.id}, {
       enableBackdropDismiss: false
     });
     createJournalModal.present();
   }
 
-  onViewJournal(journalId: number): void {
-    const viewJournalModal = this.modalCtrl.create(JournalViewPage);
+  onViewJournal(journal: JournalModel): void {
+    const viewJournalModal = this.modalCtrl.create(JournalViewPage, {journal: journal});
     viewJournalModal.present();
   }
 

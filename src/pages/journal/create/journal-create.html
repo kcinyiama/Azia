@@ -12,7 +12,7 @@
 
   <div padding>
     <b>
-      <ion-input placeholder="Title" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-input>
+      <ion-input placeholder="Title" autocorrect="on" (ionChange)="onJournalContentChange()" [(ngModel)]="journal.title"></ion-input>
     </b>
 
     <hr>
@@ -26,16 +26,16 @@
     </div>
 
     <b>
-      <ion-input placeholder="Preamble" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-input>
+      <ion-input placeholder="Preamble" autocorrect="on" (ionChange)="onJournalContentChange()" [(ngModel)]="journal.preamble"></ion-input>
     </b>
 
-    <ion-textarea placeholder="Write to me" rows="10" autocorrect="on" (ionChange)="onJournalContentChange()"></ion-textarea>
+    <ion-textarea placeholder="Write to me" rows="10" autocorrect="on" (ionChange)="onJournalContentChange()" [(ngModel)]="journal.content"></ion-textarea>
   </div>
 
 </ion-content>
 
 <ion-footer padding>
-  <ion-chip style="margin: 2px;" *ngFor="let tag of journalTagList">
+  <ion-chip style="margin: 2px;" *ngFor="let tag of journal.tags">
     <ion-icon name="bookmark"></ion-icon>
     <ion-label>{{ tag }}</ion-label>
     <button ion-button clear color="primary" (click)="onRemoveJournalTag(tag)">

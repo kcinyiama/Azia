@@ -1,34 +1,49 @@
-import { Component } from '@angular/core';
-import { NavController, Events } from 'ionic-angular';
+
+import { Component, OnInit } from '@angular/core';
+import { NavController, AlertController, PopoverController, Events } from 'ionic-angular';
 
 import { LabelModel } from './../../models/label';
 import { JournalPage } from './../journal/journal';
+import { OptionPopoverPage } from './option/option';
+
+import { LabelProvider } from './../../providers/label/label';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
   jPage: any = JournalPage;
 
   /** The currently selected label */
   activeLabel: LabelModel;
 
-  labelList: LabelModel[] = [
-    new LabelModel(1, 'My thoughts'),
-    new LabelModel(2, 'Workplace'),
-    new LabelModel(3, 'Future plans'),
-    new LabelModel(4, 'No label')
-  ];
+  labelList: LabelModel[] = [];
 
-  constructor(public navCtrl: NavController, public events: Events) {
-    this.activeLabel = this.labelList[0];
+  constructor
+  (
+    private events: Events,
+    private navCtrl: NavController,
+    private alertCtrl: AlertController,
+    private labelProvider: LabelProvider,
+    private popoverCtrl: PopoverController
+  )
+  {}
 
-    setTimeout(() => {
-      // Fire the event
-      this.events.publish('label:selected', this.activeLabel);
-    }, 100);
+  ngOnInit(): void {
+    this.labelProvider.labelsOnChangeEvent.subscribe(() => {
+      this.labelList = this.labelProvider.getLabels();
+
+      if (this.labelList.length > 0 && this.activeLabel == null) {
+        this.activeLabel = this.labelList[0];
+
+        // Fire the event
+        this.events.publish('label:selected', this.activeLabel);
+      }
+    });
+
+    this.labelProvider.fetchLabels();
   }
 
   onLabelSelected(index: number): void {
@@ -46,5 +61,39 @@ export class HomePage {
     return "app-background-colour";
   }
 
+  onLabelSettings(index: number): void {
+    let popover = this.popoverCtrl.create(OptionPopoverPage, {label: this.labelList[index]});
+    popover.present({
+      ev: event
+    });
+  }
+
+  onCreateNewLabel(): void {
+    const alert = this.alertCtrl.create({
+      title: 'Create New Label',
+      inputs: [
+        {
+          name: 'label_name',
+          placeholder: 'Name',
+          type: 'text'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Save',
+          handler: (data: any) => {
+            if (data.label_name != '') {
+              this.labelProvider.saveLabel(new LabelModel(-1, data.label_name), null);
+            }
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
 }
 
