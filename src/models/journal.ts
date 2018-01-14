@@ -3,7 +3,7 @@ export class JournalModel {
 
   constructor
   (
-    public id: number,
+    public id: string,
 
     public title: string,
 
@@ -17,7 +17,7 @@ export class JournalModel {
 
     public tags: string[],
 
-    public labelId: number
+    public labelId: string
   )
   {}
 

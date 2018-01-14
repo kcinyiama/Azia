@@ -1,10 +1,10 @@
-
 import { Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 import { of }      from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
 
+import { UtilsProvider } from './../utils';
 import { AppStorage } from './../storage/app';
 import { JournalModel } from './../../models/journal';
 import { ResponseCallback } from './../../interfaces/response-callback';
@@ -12,29 +12,24 @@ import { ResponseCallback } from './../../interfaces/response-callback';
 @Injectable()
 export class JournalProvider {
 
-  private journals: JournalModel[] = [
-    new JournalModel(1, 'A Week Like No Other', 'A very long content', 'I thought it was all over but then I was wrong', new Date('April 17, 2017 03:24:00'), null, ['Love', 'Hate'], 1),
-    new JournalModel(2, 'How I Met A Diva', 'A very long content', "If you think you've seen them all, look again", new Date('April 16, 2017 03:24:00'), null, [], 2),
-    new JournalModel(3, 'A Journey To Akitikpa', 'A very long content', "A very wonderful place to be", new Date('June 17, 2017 03:24:00'), null, [], 3),
-    new JournalModel(4, 'Challenge', 'A very long content', "This is the toughest battle yet", new Date('June 17, 2017 03:24:00'), null, [], 4),
-    new JournalModel(5, 'Crush', 'A very long content', "I don't have a preamble for this one", new Date('April 17, 2017 03:24:00'), null, [], 1),
-  ];
+  private journals: JournalModel[] = [];
 
   journalsOnChangeEvent = new Subject();
 
   constructor
   (
-    private appStorage: AppStorage
+    private appStorage: AppStorage,
+    private utilsProvider: UtilsProvider
   )
   {}
 
-  getJournals(labelId: number): JournalModel[] {
+  getJournals(labelId: string): JournalModel[] {
     return this.journals.slice().filter((local: JournalModel) => {
       return local.labelId == labelId;
     });
   }
 
-  getJournalById(journalId: number): JournalModel {
+  getJournalById(journalId: string): JournalModel {
     return this.journals.slice().find((local: JournalModel) => {
       return local.id == journalId;
     });
@@ -46,69 +41,141 @@ export class JournalProvider {
       this.journalsOnChangeEvent.next();
     });
 
-    // Make a request to the backend to fetch for new journals
-  }
+    /*
+    this.journalHttp.getJournalData(r => {
+      if (r.status && r.extras != null) {
+        const savedJournals: JournalModel[] = [];
 
-  saveJournal(journal: JournalModel, callback: ({}: ResponseCallback) => void): void {
-    // Save the journal on the backend
-    // Delete later
-    let id = 1;
-    if (this.journals.length > 0) {
-      id = this.journals[this.journals.length - 1].id;
-      id++;
-    }
-    journal.id = id;
+        for (const labelKey in r.extras) {
+          if (r.extras.hasOwnProperty(labelKey)) {
+            const labelContent = r.extras[labelKey];
 
-    this.journals.push(journal);
-    this.appStorage.setJournals(this.journals);
+            for (const journalKey in labelContent) {
+              if (labelContent.hasOwnProperty(journalKey)) {
+                const j = labelContent[journalKey];
 
-    this.journalsOnChangeEvent.next();
+                savedJournals.push(new JournalModel(
+                  journalKey, j.title, j.content, j.preamble, new Date(j.createdAt),
+                  j.updatedAt != null ? new Date(j.updatedAt) : null, j.tags, j.labelId
+                ))
+              }
+            }
+          }
+        }
+
+        this.journals = savedJournals;
+        this.journalsOnChangeEvent.next();
+        this.appStorage.setJournals(this.journals);
+      }
+    });
+    */
   }
 
   autoSaveJournal(journal: JournalModel): Observable<JournalModel> {
-    let id = 1;
-    if (this.journals.length > 0) {
-      id = this.journals[this.journals.length - 1].id;
-      id++;
-    }
-
-    if (journal.id == -1) {
-      journal.id = id;
-
-      this.journals.push(journal);
-      this.appStorage.setJournals(this.journals);
-
-      this.journalsOnChangeEvent.next();
-      return of(Object.assign({}, journal));
-    }
-
     const journalIndex = this.journals.findIndex((local: JournalModel) => {
       return local.id == journal.id;
     });
 
-    if (journalIndex != -1) {
-      this.journals[journalIndex] = journal;
+    if (journalIndex == -1) {
+      journal.id = 'j' + this.utilsProvider.generateUUID();
 
-      this.appStorage.setJournals(this.journals);
-      this.journalsOnChangeEvent.next();
+      this.journals.push(journal);
+      this.appStorage.setJournals(this.journals).then(() => {
+        this.journalsOnChangeEvent.next();
+      });
 
       return of(Object.assign({}, journal));
     }
-    return of();
+    else {
+      this.journals[journalIndex] = journal;
+      this.appStorage.setJournals(this.journals).then(() => {
+        this.journalsOnChangeEvent.next();
+      });
+      return of(Object.assign({}, journal));
+    }
+    /*
+    const journalIndex = this.journals.findIndex((local: JournalModel) => {
+      return local.id == journal.id;
+    });
+
+    if (journalIndex == -1) {
+      this.journalHttp.saveJournalData(journal, r => {
+        console.log('Save journalm', r);
+        return;
+
+        // if (r.status) {
+        //   this.journals.push(r.extras);
+        //   this.appStorage.setJournals(this.journals);
+
+        //   this.journalsOnChangeEvent.next();
+        //   return of(Object.assign({}, journal));
+        // }
+      });
+    }
+    else {
+      this.journalHttp.updateJournalData(journal, r => {
+        console.log('Update journal', r);
+        return;
+
+        // if (r.status) {
+        //   this.journals[journalIndex] = r.extras;
+        //   this.appStorage.setJournals(this.journals);
+
+        //   this.journalsOnChangeEvent.next();
+        //   return of(Object.assign({}, journal));
+        // }
+      });
+    }
+    */
   }
 
-  deleteJournal(id: number, callback: ({}: ResponseCallback) => void): void {
-    this.journals = this.journals.filter((local: JournalModel) => {
-      return local.id != id;
+  deleteJournal(journal: JournalModel, callback: ({}: ResponseCallback) => void): void {
+    const pending = this.journals.filter((local: JournalModel) => {
+      return local.id != journal.id;
     });
 
-    this.appStorage.setJournals(this.journals);
+    if (pending.length < this.journals.length) {
+      this.journals = pending;
 
-    callback({
-      status: true,
-      message: '',
+      this.appStorage.setJournals(this.journals).then(() => {
+        this.journalsOnChangeEvent.next();
+      });
+    }
+
+    /*
+    this.journalHttp.deleteJournalData(journal, r => {
+      console.log('Delete journal', r);
+      return;
+
+      // if (r.status) {
+      //   this.journals = this.journals.filter((local: JournalModel) => {
+      //     return local.id != journal.id;
+      //   });
+
+      //   this.appStorage.setJournals(this.journals);
+
+      //   callback({
+      //     status: true,
+      //     message: '',
+      //   });
+
+      //   this.journalsOnChangeEvent.next();
+      // }
+    });
+    */
+  }
+
+  deleteJournalByLabelId(labelId: string): void {
+    const pending = this.journals.filter((local: JournalModel) => {
+      return local.labelId != labelId;
     });
 
-    this.journalsOnChangeEvent.next();
+    if (pending.length < this.journals.length) {
+      this.journals = pending;
+
+      this.appStorage.setJournals(this.journals).then(() => {
+        this.journalsOnChangeEvent.next();
+      });
+    }
   }
 }

@@ -1,18 +1,23 @@
-
 import { Component, OnInit } from '@angular/core';
 import { NavController, AlertController, PopoverController, Events } from 'ionic-angular';
 
 import { LabelModel } from './../../models/label';
 import { JournalPage } from './../journal/journal';
 import { OptionPopoverPage } from './option/option';
+import { LogoutPopoverPage } from './../auth/logout/logout';
 
 import { LabelProvider } from './../../providers/label/label';
+import { JournalProvider } from './../../providers/journal/journal';
+
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage implements OnInit {
+
+  email: string;
 
   jPage: any = JournalPage;
 
@@ -27,6 +32,7 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private labelProvider: LabelProvider,
+    private journalProvider: JournalProvider,
     private popoverCtrl: PopoverController
   )
   {}
@@ -44,6 +50,13 @@ export class HomePage implements OnInit {
     });
 
     this.labelProvider.fetchLabels();
+    this.journalProvider.fetchJournals();
+
+    // const user = firebase.auth().currentUser;
+
+    // if (user != null) {
+    //   this.email = user.email;
+    // }
   }
 
   onLabelSelected(index: number): void {
@@ -51,7 +64,7 @@ export class HomePage implements OnInit {
     this.events.publish('label:selected', this.activeLabel);
   }
 
-  getSelectionColour(id: number): string {
+  getSelectionColour(id: string): string {
     const isActiveLabel = id == this.activeLabel.id;
 
     if (isActiveLabel) {
@@ -87,13 +100,20 @@ export class HomePage implements OnInit {
           text: 'Save',
           handler: (data: any) => {
             if (data.label_name != '') {
-              this.labelProvider.saveLabel(new LabelModel(-1, data.label_name), null);
+              this.labelProvider.saveLabel(new LabelModel('', data.label_name));
             }
           }
         }
       ]
     });
     alert.present();
+  }
+
+  onLogout(): void {
+    let popover = this.popoverCtrl.create(LogoutPopoverPage);
+    popover.present({
+      ev: event
+    });
   }
 }
 

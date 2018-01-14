@@ -32,7 +32,7 @@ export class LabelPopoverPage implements OnInit {
       }
     });
 
-    const labelId: number = this.navParams.data.labelId;
+    const labelId: string = this.navParams.data.labelId;
 
     this.labelList = this.labelProvider.getLabels();
 
@@ -64,7 +64,7 @@ export class LabelPopoverPage implements OnInit {
           text: 'Save',
           handler: (data: any) => {
             if (data.label_name != '') {
-              this.labelProvider.saveLabel(new LabelModel(-1, data.label_name), null);
+              this.labelProvider.saveLabel(new LabelModel('', data.label_name));
             }
           }
         }
@@ -79,7 +79,7 @@ export class LabelPopoverPage implements OnInit {
     this.viewCtrl.dismiss(this.selectedLabel.id);
   }
 
-  getSelectedLabelIcon(id: number): string {
+  getSelectedLabelIcon(id: string): string {
     return this.selectedLabel.id == id ? 'checkmark' : '';
   }
 }

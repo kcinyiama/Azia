@@ -27,7 +27,7 @@ export class JournalCreatePage implements OnInit {
   isUpdate: boolean = false;
 
   /** If the journal was successfully saved or not */
-  saveStatus: string = 'Saved';
+  saveStatus: string = '';
 
   journal: JournalModel;
 
@@ -42,7 +42,7 @@ export class JournalCreatePage implements OnInit {
     private journalProvider: JournalProvider
   )
   {
-    this.journal = new JournalModel(-1, '', '', '', new Date(), null, [], -1);
+    this.journal = new JournalModel('', '', '', '', new Date(), null, [], '');
   }
 
   ngOnInit(): void {
@@ -55,15 +55,16 @@ export class JournalCreatePage implements OnInit {
     }
 
     this.saveJournal.pipe(
-      debounceTime(2000),
+      debounceTime(5000),
 
       switchMap((journal: JournalModel) => {
         return this.journalProvider.autoSaveJournal(journal);
       })
 
     ).subscribe((res) => {
-      console.log(res);
       this.journal = res;
+      this.isSaving = false;
+      this.saveStatus = 'Saved';
     });
   }
 
@@ -112,9 +113,13 @@ export class JournalCreatePage implements OnInit {
     popover.present({
       ev: event
     });
-    popover.onDidDismiss((labelId: number) => {
+    popover.onDidDismiss((labelId: string) => {
       if (labelId != null) {
         this.journal.labelId = labelId;
+
+        // TODO Changing labels should delete the old
+        // journal of the previous label
+        this.onJournalContentChange();
       }
     });
   }
@@ -124,6 +129,8 @@ export class JournalCreatePage implements OnInit {
   }
 
   onJournalContentChange(): void {
+    this.isSaving = true;
+
     if (this.isUpdate) {
       this.journal.updatedAt = new Date();
     }

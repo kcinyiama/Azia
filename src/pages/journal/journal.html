@@ -20,7 +20,7 @@
     <br/>
   </div>
 
-  <ion-fab bottom right #fab>
+  <ion-fab bottom right #fab *ngIf="labelModel != null" >
     <button ion-fab (click)="onCreateJournal()">
       <ion-icon name="create"></ion-icon>
     </button>

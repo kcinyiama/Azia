@@ -46,12 +46,9 @@ export class OptionPopoverPage implements OnInit {
           handler: (data: any) => {
             if (data.label_name != '') {
               this.label.name = data.label_name;
+              this.labelProvider.updateLabel(this.label);
 
-              this.labelProvider.updateLabel(this.label, (r) => {
-                if (r.status) {
-                  this.viewCtrl.dismiss();
-                }
-              });
+              this.viewCtrl.dismiss();
             }
           }
         }
@@ -71,11 +68,8 @@ export class OptionPopoverPage implements OnInit {
         {
           text: 'Delete',
           handler: () => {
-            this.labelProvider.deleteLabel(this.label.id, (r) => {
-              if (r.status) {
-                this.viewCtrl.dismiss();
-              }
-            });
+            this.labelProvider.deleteLabel(this.label);
+            this.viewCtrl.dismiss();
           }
         }
       ]

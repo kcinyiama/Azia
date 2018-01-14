@@ -1,15 +1,11 @@
 <ion-header>
   <ion-navbar color="primary">
-    <button ion-button icon-only clear>
-      <ion-icon name="list" color="light"></ion-icon>
-      <ion-title>
-          Azia
-      </ion-title>
-    </button>
+    <ion-title>
+        Azia
+    </ion-title>
     <ion-buttons end>
-      <button ion-button>
-        <p>Kossy &nbsp;&nbsp;</p>
-        <ion-icon name="arrow-down" md="ios-arrow-down"></ion-icon>
+      <button ion-button (click)="onLogout()">
+        <p>{{ email }}&nbsp;&nbsp;</p>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -20,7 +16,6 @@
   <ion-grid>
     <ion-row>
       <ion-col col-2>
-
         <ion-list>
           <button [ngClass]="getSelectionColour(label.id)" ion-item no-lines *ngFor="let label of labelList; let i = index" (click)="onLabelSelected(i)">
             <ion-icon color="primary" name="apps" item-left></ion-icon>
@@ -35,7 +30,6 @@
           <ion-icon item-left name="add"></ion-icon>
           <p>Create Label</p>
         </button>
-
       </ion-col>
       <ion-col col-10>
         <ion-nav [root]="jPage" swipeBackEnabled="false"></ion-nav>

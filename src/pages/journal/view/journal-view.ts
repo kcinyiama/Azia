@@ -60,7 +60,7 @@ export class JournalViewPage implements OnInit {
         {
           text: 'Delete',
           handler: () => {
-            this.journalProvider.deleteJournal(this.journal.id, r => {
+            this.journalProvider.deleteJournal(this.journal, r => {
               if (r.status) {
                 this.viewCtrl.dismiss();
               }

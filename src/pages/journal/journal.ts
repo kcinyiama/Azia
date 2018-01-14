@@ -1,10 +1,14 @@
+
 import { Component, OnInit } from '@angular/core';
 import { NavController, Events, ModalController } from 'ionic-angular';
 
 import { LabelModel } from './../../models/label';
 import { JournalModel } from './../../models/journal';
-import { JournalCreatePage } from './create/journal-create';
+
 import { JournalViewPage } from './view/journal-view';
+import { JournalCreatePage } from './create/journal-create';
+
+import { LabelProvider } from './../../providers/label/label';
 import { JournalProvider } from './../../providers/journal/journal';
 
 import { default as prettyDate } from 'pretty-date';
@@ -23,6 +27,7 @@ export class JournalPage implements OnInit {
     private events: Events,
     private navCtrl: NavController,
     private modalCtrl: ModalController,
+    private labelProvider: LabelProvider,
     private journalProvider: JournalProvider
   )
   {}
@@ -35,9 +40,28 @@ export class JournalPage implements OnInit {
       this.prepareJournal(journalList);
     });
 
+    // Issues to fix
+    // 1. When the event is triggered, if labelModel is deleted,
+    // it should be reflected. Pick the next available label
+
+    // 2. Fix if no labels are present
+    this.labelProvider.labelsOnChangeEvent.subscribe((data: LabelModel) => {
+      if (data != null) {
+        this.labelModel = data;
+      }
+
+      if (this.labelProvider.getLabelById(this.labelModel.id) == null) {
+        this.labelModel = null;
+
+        this.prepareJournal([]);
+      }
+    });
+
     this.journalProvider.journalsOnChangeEvent.subscribe(() => {
-      const journalList: JournalModel[] = this.journalProvider.getJournals(this.labelModel.id);
-      this.prepareJournal(journalList);
+      if (this.labelModel != null) {
+        const journalList: JournalModel[] = this.journalProvider.getJournals(this.labelModel.id);
+        this.prepareJournal(journalList);
+      }
     });
   }
 
