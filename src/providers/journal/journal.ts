@@ -35,10 +35,17 @@ export class JournalProvider {
     });
   }
 
-  fetchJournals(): void {
+  fetchJournals(callback?: ({}: ResponseCallback) => void): void {
     this.appStorage.getJournals().then((journals: JournalModel[]) => {
       this.journals = journals;
       this.journalsOnChangeEvent.next();
+
+      if (callback != null) {
+        callback({
+          status: true,
+          message: ''
+        });
+      }
     });
 
     /*

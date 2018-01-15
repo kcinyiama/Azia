@@ -40,21 +40,16 @@ export class JournalPage implements OnInit {
       this.prepareJournal(journalList);
     });
 
-    // Issues to fix
-    // 1. When the event is triggered, if labelModel is deleted,
-    // it should be reflected. Pick the next available label
-
-    // 2. Fix if no labels are present
     this.labelProvider.labelsOnChangeEvent.subscribe((data: LabelModel) => {
-      if (data != null) {
-        this.labelModel = data;
-      }
+      this.labelModel = data;
 
-      if (this.labelProvider.getLabelById(this.labelModel.id) == null) {
-        this.labelModel = null;
-
+      if (this.labelModel == null) {
         this.prepareJournal([]);
+        return;
       }
+
+      const journalList: JournalModel[] = this.journalProvider.getJournals(this.labelModel.id);
+      this.prepareJournal(journalList);
     });
 
     this.journalProvider.journalsOnChangeEvent.subscribe(() => {

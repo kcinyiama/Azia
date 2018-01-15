@@ -55,7 +55,7 @@ export class JournalCreatePage implements OnInit {
     }
 
     this.saveJournal.pipe(
-      debounceTime(5000),
+      debounceTime(500),
 
       switchMap((journal: JournalModel) => {
         return this.journalProvider.autoSaveJournal(journal);

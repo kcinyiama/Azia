@@ -44,13 +44,17 @@ export class HomePage implements OnInit {
       if (this.labelList.length > 0 && this.activeLabel == null) {
         this.activeLabel = this.labelList[0];
 
-        // Fire the event
-        this.events.publish('label:selected', this.activeLabel);
+        this.journalProvider.fetchJournals(r => {
+
+          if (r.status) {
+            // Fire the event
+            this.events.publish('label:selected', this.activeLabel);
+          }
+        });
       }
     });
 
     this.labelProvider.fetchLabels();
-    this.journalProvider.fetchJournals();
 
     // const user = firebase.auth().currentUser;
 
